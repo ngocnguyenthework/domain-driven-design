@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.DS_Store
+.vscode/
+.idea/
+coverage/
+pnpm-debug.log*
+/build/
+/out/
+/.cache/
