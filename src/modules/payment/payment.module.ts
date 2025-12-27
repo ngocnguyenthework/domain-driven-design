@@ -15,13 +15,12 @@ import { PAYMENT_REPOSITORY_TOKEN } from './domain/repositories/payment-reposito
   imports: [CqrsModule, TypeOrmModule.forFeature([PaymentPersistenceEntity])],
   controllers: [PaymentController],
   providers: [
-    PaymentRepository,
     PaymentMapper,
     PaymentResponseMapper,
     CreatePaymentHandler,
     GetPaymentHandler,
     ListPaymentsHandler,
-    { provide: PAYMENT_REPOSITORY_TOKEN, useExisting: PaymentRepository },
+    { provide: PAYMENT_REPOSITORY_TOKEN, useClass: PaymentRepository },
   ],
   exports: [PAYMENT_REPOSITORY_TOKEN],
 })

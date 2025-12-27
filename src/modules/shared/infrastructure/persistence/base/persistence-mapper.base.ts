@@ -90,7 +90,7 @@ export abstract class BaseMapper<
     options: MappingOptions = {},
   ): PersistenceEntity {
     const persistence = new PersistenceClass();
-    let persistenceKeys = this._getEntityKeys(persistence);
+    let persistenceKeys = this._getEntityKeys(persistence, true);
 
     const { include = [], exclude = [] } = options;
 
@@ -124,7 +124,10 @@ export abstract class BaseMapper<
     return persistence;
   }
 
-  private _getEntityKeys(entity: DomainEntity | PersistenceEntity): string[] {
+  private _getEntityKeys(
+    entity: DomainEntity | PersistenceEntity,
+    excludeBase = false,
+  ): string[] {
     const keys = new Set<string>();
 
     Object.getOwnPropertyNames(entity).forEach((key) => keys.add(key));
@@ -138,6 +141,12 @@ export abstract class BaseMapper<
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       currentPrototype = Object.getPrototypeOf(currentPrototype);
+    }
+
+    if (excludeBase) {
+      keys.delete('id');
+      keys.delete('createdAt');
+      keys.delete('updatedAt');
     }
 
     return Array.from(keys);

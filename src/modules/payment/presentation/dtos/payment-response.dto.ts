@@ -1,11 +1,14 @@
-export class PaymentResponseDto {
-  id: string;
-  amount: number;
-  currency: string;
-  status: string;
-  customerId: string;
-  description?: string;
-  metadata?: Record<string, unknown>;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { PickType } from '@nestjs/swagger';
+import { PaymentPersistenceEntity } from '@/modules/payment/infrastructure/persistence/entities/payment-persistence.entity';
+
+export class PaymentResponseDto extends PickType(PaymentPersistenceEntity, [
+  'id',
+  'amount',
+  'currency',
+  'status',
+  'customerId',
+  'description',
+  'metadata',
+  'createdAt',
+  'updatedAt',
+]) {}

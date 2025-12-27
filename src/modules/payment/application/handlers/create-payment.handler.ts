@@ -4,25 +4,33 @@ import { Payment } from '../../domain/entities/payment.entity';
 import { Money } from '../../domain/value-objects/money.vo';
 import { PaymentMetadata } from '../../domain/value-objects/payment-metadata.vo';
 import { Inject, Injectable } from '@nestjs/common';
-import { PAYMENT_REPOSITORY_TOKEN } from '../../domain/repositories/payment-repository.interface';
+import {
+  type IPaymentRepository,
+  PAYMENT_REPOSITORY_TOKEN,
+} from '../../domain/repositories/payment-repository.interface';
+import { ILoadedEntity } from '@/modules/shared/domain/types/domain-entity.type';
 
 @Injectable()
 @CommandHandler(CreatePaymentCommand)
 export class CreatePaymentHandler implements ICommandHandler<CreatePaymentCommand> {
   constructor(
     @Inject(PAYMENT_REPOSITORY_TOKEN)
-    private readonly repository: any,
+    private readonly repository: IPaymentRepository,
   ) {}
 
-  async execute(command: CreatePaymentCommand): Promise<Payment> {
+  async execute(
+    command: CreatePaymentCommand,
+  ): Promise<ILoadedEntity<Payment>> {
     const money = Money.create(command.amount, command.currency);
-    const metadata = command.metadata ? PaymentMetadata.create(command.metadata) : undefined;
+    const metadata = command.metadata
+      ? PaymentMetadata.create(command.metadata)
+      : PaymentMetadata.create({});
 
     const payment = Payment.create({
       amount: money,
       customerId: command.customerId,
-      description: command.description,
-      metadata,
+      description: command.description ?? '',
+      metadata: metadata,
     });
 
     // Simulate payment processing

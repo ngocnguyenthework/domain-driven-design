@@ -1,4 +1,14 @@
-import { Controller, Post, Get, Body, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Param,
+  Query,
+  HttpCode,
+  HttpStatus,
+  DefaultValuePipe,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreatePaymentDto } from '../dtos/create-payment.dto';
@@ -46,19 +56,23 @@ export class PaymentController {
   @ApiOperation({ summary: 'List payments with pagination' })
   @ApiResponse({ status: 200, type: [PaymentResponseDto] })
   async findAll(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-  ): Promise<{ data: PaymentResponseDto[]; total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }> {
+    @Query('page', new DefaultValuePipe(1)) page: number,
+    @Query('limit', new DefaultValuePipe(10)) limit: number,
+  ): Promise<{
+    data: PaymentResponseDto[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+  }> {
     const query = new ListPaymentsQuery(Number(page), Number(limit));
     const result = await this.queryBus.execute(query);
+
     return {
-      data: result.data.map((p: any) => this.mapper.toDto(p)),
-      total: result.total,
-      page: result.page,
-      limit: result.limit,
-      totalPages: result.totalPages,
-      hasNext: result.hasNext,
-      hasPrevious: result.hasPrevious,
+      ...result,
+      data: result.data.map((payment) => this.mapper.toDto(payment)),
     };
   }
 }

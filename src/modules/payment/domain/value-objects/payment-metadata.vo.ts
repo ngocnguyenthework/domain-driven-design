@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ValueObject } from '@/modules/shared/domain/base/domain-value-object.base';
 
 export class PaymentMetadata extends ValueObject<Record<string, unknown>> {

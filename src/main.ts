@@ -10,6 +10,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
+  const config = new DocumentBuilder()
+    .setTitle('Payment example')
+    .setDescription('The payment API description')
+    .setVersion('1.0')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, documentFactory);
+
   app.enableCors();
 
   app.useGlobalPipes(
@@ -20,17 +28,6 @@ async function bootstrap() {
   );
 
   app.use(compression());
-
-  // Swagger API Documentation
-  const config = new DocumentBuilder()
-    .setTitle('Payment API')
-    .setDescription('Payment processing API using DDD patterns')
-    .setVersion('1.0')
-    .addTag('payments')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(configService.port, () => {
     console.log('Server running on port:::  ', configService.port);

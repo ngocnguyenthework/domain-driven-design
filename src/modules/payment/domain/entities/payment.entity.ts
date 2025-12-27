@@ -1,129 +1,70 @@
-import { AggregateRoot as NestAggregateRoot } from '@nestjs/cqrs';
 import { Money } from '../value-objects/money.vo';
 import { PaymentStatus } from '../enums/payment-status.enum';
 import { PaymentMetadata } from '../value-objects/payment-metadata.vo';
+import { AggregateRoot } from '@/modules/shared/domain/base/domain-aggregate.base';
+import { PaymentPersistenceEntity } from '../../infrastructure/persistence/entities/payment-persistence.entity';
+import {
+  IEntity,
+  ILoadedEntity,
+} from '@/modules/shared/domain/types/domain-entity.type';
+import { IPaymentProperties } from '../types/payment.type';
 
-export class Payment extends NestAggregateRoot {
-  private _id: string | null;
-  private _amount: Money;
-  private _status: PaymentStatus;
-  private _customerId: string;
-  private _description: string | undefined;
-  private _metadata: PaymentMetadata | undefined;
-  private _createdAt: Date | null;
-  private _updatedAt: Date | null;
-
-  get id(): string | null {
-    return this._id;
+export class Payment
+  extends AggregateRoot<IEntity<IPaymentProperties>>
+  implements IEntity<IPaymentProperties>
+{
+  private constructor(
+    public readonly id: string | null,
+    public readonly createdAt: Date | null,
+    public readonly updatedAt: Date | null,
+    public status: PaymentStatus,
+    public amount: Money,
+    public metadata: PaymentMetadata,
+    public customerId: string,
+    public description: string | null,
+  ) {
+    super(id, createdAt, updatedAt);
   }
 
-  get amount(): Money {
-    return this._amount;
+  public static create(props: Omit<IPaymentProperties, 'status'>): Payment {
+    return new Payment(
+      null,
+      null,
+      null,
+      PaymentStatus.PENDING,
+      props.amount,
+      props.metadata,
+      props.customerId,
+      props.description,
+    );
   }
 
-  get status(): PaymentStatus {
-    return this._status;
+  public static load(
+    props: ILoadedEntity<PaymentPersistenceEntity>,
+  ): ILoadedEntity<Payment> {
+    return new Payment(
+      props.id,
+      props.createdAt,
+      props.updatedAt,
+      props.status,
+      Money.create(props.amount, props.currency),
+      PaymentMetadata.create(props.metadata || {}),
+      props.customerId,
+      props.description,
+    ) as ILoadedEntity<Payment>;
   }
 
-  get customerId(): string {
-    return this._customerId;
-  }
-
-  get description(): string | undefined {
-    return this._description;
-  }
-
-  get metadata(): PaymentMetadata | undefined {
-    return this._metadata;
-  }
-
-  get createdAt(): Date | null {
-    return this._createdAt;
-  }
-
-  get updatedAt(): Date | null {
-    return this._updatedAt;
-  }
-
-  private constructor(data: {
-    id: string | null;
-    amount: Money;
-    status: PaymentStatus;
-    customerId: string;
-    description?: string;
-    metadata?: PaymentMetadata;
-    createdAt: Date | null;
-    updatedAt: Date | null;
-  }) {
-    super();
-    this._id = data.id;
-    this._amount = data.amount;
-    this._status = data.status;
-    this._customerId = data.customerId;
-    this._description = data.description;
-    this._metadata = data.metadata;
-    this._createdAt = data.createdAt;
-    this._updatedAt = data.updatedAt;
-  }
-
-  // Domain Logic: Complete payment
   public complete(): void {
-    if (this._status !== PaymentStatus.PENDING) {
+    if (this.status !== PaymentStatus.PENDING) {
       throw new Error('Can only complete pending payments');
     }
-    this._status = PaymentStatus.COMPLETED;
-    this._updatedAt = new Date();
+    this.status = PaymentStatus.COMPLETED;
   }
 
-  // Domain Logic: Fail payment
   public fail(): void {
-    if (this._status !== PaymentStatus.PENDING) {
+    if (this.status !== PaymentStatus.PENDING) {
       throw new Error('Can only fail pending payments');
     }
-    this._status = PaymentStatus.FAILED;
-    this._updatedAt = new Date();
-  }
-
-  // Factory Method: Create new payment
-  public static create(data: {
-    amount: Money;
-    customerId: string;
-    description?: string;
-    metadata?: PaymentMetadata;
-  }): Payment {
-    const now = new Date();
-    return new Payment({
-      id: null,
-      amount: data.amount,
-      status: PaymentStatus.PENDING,
-      customerId: data.customerId,
-      description: data.description,
-      metadata: data.metadata,
-      createdAt: now,
-      updatedAt: now,
-    });
-  }
-
-  // Factory Method: Reconstitute from persistence
-  public static load(data: {
-    id: string;
-    amount: Money;
-    status: PaymentStatus;
-    customerId: string;
-    description?: string;
-    metadata?: PaymentMetadata;
-    createdAt: Date;
-    updatedAt: Date;
-  }): Payment {
-    return new Payment({
-      id: data.id,
-      amount: data.amount,
-      status: data.status,
-      customerId: data.customerId,
-      description: data.description,
-      metadata: data.metadata,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-    });
+    this.status = PaymentStatus.FAILED;
   }
 }

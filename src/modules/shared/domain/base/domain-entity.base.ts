@@ -6,7 +6,7 @@ export abstract class BaseEntity<
   T extends IBaseEntity,
 > extends NestAggregateRoot {
   constructor(
-    public readonly id: number | null,
+    public readonly id: (number | string) | null,
     public readonly createdOn: Date | null,
     public readonly updatedOn: Date | null,
   ) {
