@@ -24,7 +24,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   migrations: ['dist/core/database/migrations/*.js'],
 
   migrationsRun: false,
-  synchronize: false,
+  synchronize: true,
   dropSchema: false,
 
   logging: process.env.NODE_ENV === Environment.DEVELOPMENT,

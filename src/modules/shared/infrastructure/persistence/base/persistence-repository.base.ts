@@ -4,17 +4,17 @@ import {
   type Repository,
   type FindManyOptions,
 } from 'typeorm';
-import type { IMapper } from '@/payment/shared/infrastructure/persistence/types/persistence-mapper.type';
+import type { IMapper } from '@/modules/shared/infrastructure/persistence/types/persistence-mapper.type';
 import { BadRequestException } from '@nestjs/common';
 import type {
   IBaseRepository,
   Id,
   IPaginatedResult,
-} from '@/payment/shared/domain/types/domain-repository.type';
+} from '@/modules/shared/domain/types/domain-repository.type';
 import type {
   IBaseEntity,
   ILoadedEntity,
-} from '@/payment/shared/domain/types/domain-entity.type';
+} from '@/modules/shared/domain/types/domain-entity.type';
 import { BaseEntity } from '@/core/database/entities/base.entity';
 
 export abstract class BaseRepository<

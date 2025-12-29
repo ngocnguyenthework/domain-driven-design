@@ -1,7 +1,7 @@
 import type {
   IBaseEntity,
   ILoadedEntity,
-} from '@/payment/shared/domain/types/domain-entity.type';
+} from '@/modules/shared/domain/types/domain-entity.type';
 
 export interface MappingOptions {
   /**

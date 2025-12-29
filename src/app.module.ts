@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { PaymentModule } from '@/payment/payment.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@/core/config/app.config';
 import { ConfigModule } from '@/core/config/config.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 const businessModules = [PaymentModule];
 
