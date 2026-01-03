@@ -4,7 +4,7 @@ A showcase implementation of **Domain-Driven Design (DDD)** patterns in a NestJS
 
 ## Overview
 
-This is a payment processing system built with rigorous attention to architectural purity. The codebase serves as a reference implementation for applying DDD concepts in a real-world TypeScript/NestJS context, showing how to separate business logic from infrastructure concerns while maintaining a clean, testable codebase.
+This is a payment processing system built with a strong focus on clean architecture. The code is an example of how to use Domain-Driven Design (DDD) in a real TypeScript and NestJS project. It shows how to keep business rules separate from technical details, making the code easy to test, understand, and maintain.
 
 ## Tech Stack
 
@@ -116,7 +116,7 @@ src/
 
 | Layer              | Responsibility                                                      | Dependencies      |
 | ------------------ | ------------------------------------------------------------------- | ----------------- |
-| **Domain** ◆       | Pure business logic, entities, value objects, repository interfaces | None              |
+| **Domain**         | Pure business logic, entities, value objects, repository interfaces | None              |
 | **Application**    | Use case orchestration, CQRS handlers                               | Domain only       |
 | **Infrastructure** | Database, external services, technical details                      | Domain interfaces |
 | **Presentation**   | HTTP, validation, API contracts                                     | Domain types      |
@@ -129,7 +129,7 @@ src/
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │                   Application                       │   │
 │  │  ┌───────────────────────────────────────────────┐  │   │
-│  │  │                  Domain ◆                     │  │   │
+│  │  │                  Domain                       │  │   │
 │  │  │         (Pure Business Logic)                 │  │   │
 │  │  └───────────────────────────────────────────────┘  │   │
 │  │                                                     │   │
@@ -257,21 +257,6 @@ Where's the use cases?      → Application layer (handlers)
 | **Database-Driven Design** | Persistence Ignorance - domain has no database imports                                     |
 | **God Objects**            | Aggregates with clear boundaries (`Payment` is root, contains VOs)                         |
 | **Leaky Abstractions**     | Mappers prevent infrastructure concerns from leaking into domain                           |
-
----
-
-## Key DDD Patterns Implemented
-
-| Pattern                       | File Reference                                                 | Description                        |
-| ----------------------------- | -------------------------------------------------------------- | ---------------------------------- |
-| **Entities**                  | `src/modules/payment/domain/entities/payment.entity.ts`        | Rich aggregates with behavior      |
-| **Value Objects**             | `src/modules/payment/domain/value-objects/`                    | Immutable, self-validating objects |
-| **Repository Interface**      | `src/modules/payment/domain/repositories/`                     | Contracts in domain layer          |
-| **Repository Implementation** | `src/modules/payment/infrastructure/persistence/repositories/` | Concrete implementations           |
-| **Commands**                  | `src/modules/payment/application/commands/`                    | Write operations                   |
-| **Queries**                   | `src/modules/payment/application/queries/`                     | Read operations                    |
-| **Handlers**                  | `src/modules/payment/application/handlers/`                    | CQRS handlers                      |
-| **Mappers**                   | `src/modules/payment/**/mappers/`                              | Layer boundary conversions         |
 
 ---
 
